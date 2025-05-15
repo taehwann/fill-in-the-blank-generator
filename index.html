@@ -1,30 +1,33 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Simple Chatbot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./index.css" />
-  </head>
-
-  <body>
-    <p>Step 1: Initialize WebLLM and Download Model</p>
-    <div class="download-container">
-      <select id="model-selection"></select>
-      <button id="download">Download</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill in the Blank Generator</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">
+      FILL IN THE BLA_K GENERATOR
     </div>
-    <p id="download-status" class="hidden"></p>
-
-    <p>Step 2: Chat</p>
-    <div class="chat-container">
-      <div id="chat-box" class="chat-box"></div>
-      <div id="chat-stats" class="chat-stats hidden"></div>
-      <div class="chat-input-container">
-        <input type="text" id="user-input" placeholder="Type a message..." />
-        <button id="send" disabled>Send</button>
-      </div>
+    <div class="difficulty">
+      Difficulty:
+      <select>
+        <option>Easy</option>
+        <option>Medium</option>
+        <option>Hard</option>
+      </select>
     </div>
+  </header>
 
-    <script src="./index.js" type="module"></script>
-  </body>
+  <main>
+    <textarea id="user-input" class="sentence" rows="4" placeholder="Type your sentence with blanks here...">She ___ a beautiful song yesterday.</textarea>
+    <button id="send" class="send-btn" disabled>Send</button>
+    <div id="download-status" class="llm-status">LLM: Ready</div>
+    <div class="donate">If you enjoy this tool, consider donating to support development. ❤️</div>
+    <button class="donate-btn">Donate</button>
+  </main>
+  <script src="./index.js" type="module"></script>
+</body>
 </html>

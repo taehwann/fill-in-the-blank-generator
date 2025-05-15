@@ -24,8 +24,7 @@ const engine = new webllm.MLCEngine();
 engine.setInitProgressCallback(updateEngineInitProgressCallback);
 
 async function initializeWebLLMEngine() {
-  document.getElementById("download-status").classList.remove("hidden");
-  selectedModel = document.getElementById("model-selection").value;
+  selectedModel = availableModels[0];
   const config = {
     temperature: 1.0,
     top_p: 1,
@@ -50,7 +49,9 @@ async function streamingGenerating(messages, onUpdate, onFinish, onError) {
       if (chunk.usage) {
         usage = chunk.usage;
       }
-      onUpdate(curMessage);
+      if (onUpdate) {
+        onUpdate(curMessage);
+      }
     }
     const finalMessage = await engine.getMessage();
     onFinish(finalMessage, usage);
@@ -72,78 +73,28 @@ function onMessageSend() {
   document.getElementById("send").disabled = true;
 
   messages.push(message);
-  appendMessage(message);
 
   document.getElementById("user-input").value = "";
   document
     .getElementById("user-input")
     .setAttribute("placeholder", "Generating...");
 
-  const aiMessage = {
-    content: "typing...",
-    role: "assistant",
-  };
-  appendMessage(aiMessage);
-
   const onFinishGenerating = (finalMessage, usage) => {
-    updateLastMessage(finalMessage);
+    document.getElementById("user-input").value = finalMessage;
     document.getElementById("send").disabled = false;
-    const usageText =
-      `prompt_tokens: ${usage.prompt_tokens}, ` +
-      `completion_tokens: ${usage.completion_tokens}, ` +
-      `prefill: ${usage.extra.prefill_tokens_per_s.toFixed(4)} tokens/sec, ` +
-      `decoding: ${usage.extra.decode_tokens_per_s.toFixed(4)} tokens/sec`;
-    document.getElementById("chat-stats").classList.remove("hidden");
-    document.getElementById("chat-stats").textContent = usageText;
   };
 
   streamingGenerating(
     messages,
-    updateLastMessage,
+    null,
     onFinishGenerating,
     console.error,
   );
 }
 
-function appendMessage(message) {
-  const chatBox = document.getElementById("chat-box");
-  const container = document.createElement("div");
-  container.classList.add("message-container");
-  const newMessage = document.createElement("div");
-  newMessage.classList.add("message");
-  newMessage.textContent = message.content;
-
-  if (message.role === "user") {
-    container.classList.add("user");
-  } else {
-    container.classList.add("assistant");
-  }
-
-  container.appendChild(newMessage);
-  chatBox.appendChild(container);
-  chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
-}
-
-function updateLastMessage(content) {
-  const messageDoms = document
-    .getElementById("chat-box")
-    .querySelectorAll(".message");
-  const lastMessageDom = messageDoms[messageDoms.length - 1];
-  lastMessageDom.textContent = content;
-}
-
 /*************** UI binding ***************/
-availableModels.forEach((modelId) => {
-  const option = document.createElement("option");
-  option.value = modelId;
-  option.textContent = modelId;
-  document.getElementById("model-selection").appendChild(option);
-});
-document.getElementById("model-selection").value = selectedModel;
-document.getElementById("download").addEventListener("click", function () {
-  initializeWebLLMEngine().then(() => {
-    document.getElementById("send").disabled = false;
-  });
+initializeWebLLMEngine().then(() => {
+  document.getElementById("send").disabled = false;
 });
 document.getElementById("send").addEventListener("click", function () {
   onMessageSend();
