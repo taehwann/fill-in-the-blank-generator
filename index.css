@@ -68,6 +68,17 @@ main {
   cursor: pointer;
 }
 
+.send-btn:disabled {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  background-color: #adadad;
+  color: white;
+  border-radius: 5px;
+  cursor: not-allowed;
+}
+
 .donate {
   margin-top: 60px;
   font-size: 0.9em;
