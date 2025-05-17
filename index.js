@@ -1,6 +1,7 @@
 import * as webllm from "https://esm.run/@mlc-ai/web-llm";
 /*************** Game logic ***************/
-const prompt = "Give me any short 4 sentences. EVERY sentence format has to look like this: 1.<sentence> \"\n\"";
+const prompt = "Give me any short 4 sentences. EVERY sentence format has to look like this: 1.<sentence> \n";
+let answerWords = [];
 
 function getSentencesFromModelResponse(response) {
   const sentences = response.split("\n").map((sentence) => sentence.trim());
@@ -16,8 +17,20 @@ function getSentencesFromModelResponse(response) {
     sentences[i] = sentences[i].replace(/^\d+\.\s*/, "");
   }
 
-  console.log(sentences);
   return sentences;
+}
+
+function getBlankWordsCountByDifficulty(difficulty) {
+  switch (difficulty) {
+    case "Easy":
+      return 1;
+    case "Medium":
+      return 2;
+    case "Hard":
+      return 3;
+    default:
+      return 1;
+  }
 }
 
 /*************** WebLLM logic ***************/
@@ -87,28 +100,50 @@ async function streamingGenerating(messages, onUpdate, onFinish, onError) {
 /*************** UI logic ***************/
 function onMessageSend() {
   document.getElementById("send").disabled = true;
+  document.getElementById("answer").disabled = true;
+  document.getElementById("answer-output").style.display = "none";
 
   document.getElementById("user-input").value = "";
   document
     .getElementById("user-input")
     .setAttribute("placeholder", "Generating...");
 
+  const difficulty = document.querySelector('#diff select').value;
+  
   const onFinishGenerating = (finalMessage, usage) => {
     document.getElementById("send").disabled = false;
+    document.getElementById("answer").disabled = false;
     const sentences = getSentencesFromModelResponse(finalMessage);
+    answerWords = sentences;
     // we got the sentences, now we make random 1 or 2 words as _ _ _ (underscore count is by their alphabet count)
     const words = sentences.map((sentence) => {
       const words = sentence.split(" ");
-      const randomIndex = Math.floor(Math.random() * words.length);
-      const word = words[randomIndex];
-      const underscores = "_ ".repeat(word.length);
-      words[randomIndex] = underscores;
+      // get a random index from 1 to words.length - 1
+      const threshold = 10;
+      const blankWordsCount = getBlankWordsCountByDifficulty(difficulty);
+      for (let blankWordIndex = 0; blankWordIndex < blankWordsCount; ++blankWordIndex) {
+        for (let _ = 0; _ < threshold; ++_) {
+          const randomIndex = Math.floor(Math.random() * (words.length - 2)) + 1;
+          const word = words[randomIndex];
+          // if the word is less than 3 characters, we skip it
+          if (word.length < 3) {
+            continue;
+          }
+          const wordLength = word.length;
+          // remove the word characters from behind by the half length of the word
+          // and replace it with underscores
+          const newWord = word.slice(0, wordLength / 2) + "_".repeat(wordLength - Math.floor(wordLength / 2));
+          words[randomIndex] = newWord;
+          break;
+        }
+      }
       return words.join(" ");
     });
-    console.log(words);
     // map all the strings into a single string and give it to user-input
     document.getElementById("user-input").value = words.join("\n");
   };
+
+  messages[1].content = prompt + ", And make it " + difficulty + " difficulty";
 
   streamingGenerating(
     messages,
@@ -124,4 +159,8 @@ initializeWebLLMEngine().then(() => {
 });
 document.getElementById("send").addEventListener("click", function () {
   onMessageSend();
+});
+document.getElementById("answer").addEventListener("click", function () {
+  document.getElementById("answer-output").style.display = "block";
+  document.getElementById("answer-output").value = answerWords.join("\n");
 });

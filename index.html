@@ -11,7 +11,7 @@
     <div class="logo">
       FILL IN THE BLA_K GENERATOR
     </div>
-    <div class="difficulty">
+    <div id="diff" class="difficulty">
       Difficulty:
       <select>
         <option>Easy</option>
@@ -22,8 +22,10 @@
   </header>
 
   <main>
-    <textarea id="user-input" class="sentence" rows="4" placeholder="Type your sentence with blanks here...">She ___ a beautiful song yesterday.</textarea>
-    <button id="send" class="send-btn" disabled>Send</button>
+    <textarea id="user-input" class="sentence" rows="4" placeholder="Press Generate Button"></textarea>
+    <textarea id="answer-output" class="answer-display" rows="4" placeholder="Answer will appear here..." readonly></textarea>
+    <button id="answer" class="answer-btn" disabled>Answer</button>
+    <button id="send" class="generate-btn" disabled>Generate</button>
     <div id="download-status" class="llm-status">LLM: Ready</div>
     <div class="donate">If you enjoy this tool, consider donating to support development. ❤️</div>
     <button class="donate-btn">Donate</button>
