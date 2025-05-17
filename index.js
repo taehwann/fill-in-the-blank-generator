@@ -48,7 +48,7 @@ const messages = [
 const availableModels = webllm.prebuiltAppConfig.model_list.map(
   (m) => m.model_id,
 );
-let selectedModel = "Llama-3.1-8B-Instruct-q4f32_1-1k";
+let selectedModel = "gemma-2-2b-it-q4f32_1-MLC";
 
 // Callback function for initializing progress
 function updateEngineInitProgressCallback(report) {
@@ -61,7 +61,7 @@ const engine = new webllm.MLCEngine();
 engine.setInitProgressCallback(updateEngineInitProgressCallback);
 
 async function initializeWebLLMEngine() {
-  selectedModel = availableModels[44];
+  // selectedModel = availableModels[44];
   const config = {
     temperature: 1.0,
     top_p: 1,
