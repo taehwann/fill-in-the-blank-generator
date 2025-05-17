@@ -5,8 +5,8 @@
 ## goals
 - [x] Basic website design
 - [x] Link webllm to user input
-- [ ] Make proper prompt for fill in the blank game
-- [ ] Update logic for the game
+- [x] Make proper prompt for fill in the blank game
+- [x] Update logic for the game
 - [ ] Update model choosing logic
 - [ ] Design and update more content (like N combo)
 - [ ] Add donate button?
