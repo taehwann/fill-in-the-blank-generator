@@ -1,6 +1,7 @@
 # fill-in-the-blank-generator
 
 ## project overview
+![diagram](./image/diagram.png)
 
 ## goals
 - [x] Basic website design
